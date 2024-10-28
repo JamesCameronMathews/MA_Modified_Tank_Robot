@@ -42,7 +42,7 @@ class StreamingOutput(io.BufferedIOBase):
 
 class Server:   
     def __init__(self):
-        self.PWM=Motor()
+        # self.PWM=Motor()
         self.servo=Servo()
         self.servo.setServoPwm('0',90)
         self.servo.setServoPwm('1',140)
