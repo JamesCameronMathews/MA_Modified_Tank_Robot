@@ -3,6 +3,7 @@ import time
 from Motor import *
 from servo import *
 from gpiozero import DistanceSensor
+from gpiozero.exc import GPIOPinInUse
 
 class Ultrasonic:
     def __init__(self):   
