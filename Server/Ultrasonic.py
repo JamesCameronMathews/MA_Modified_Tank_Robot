@@ -10,7 +10,10 @@ class Ultrasonic:
         echo_pin = 22
         MAX_DISTANCE = 300               # define the maximum measuring distance, unit: cm
         timeOut = MAX_DISTANCE*60   # calculate timeout according to the maximum measuring distance
-        self.ultrasonic = DistanceSensor(echo=echo_pin, trigger=trigger_pin)
+        try:
+            self.ultrasonic = DistanceSensor(echo=echo_pin, trigger=trigger_pin)
+        except GPIOPinInUse:
+            print("GPIO pin already in use, reusing the existing DistanceSensor instance")
     
     def get_distance(self):     # get the measurement results of ultrasonic module,with unit: cm
         return self.ultrasonic.distance*100
