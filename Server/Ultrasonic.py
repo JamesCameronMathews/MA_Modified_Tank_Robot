@@ -73,9 +73,6 @@ if __name__ == '__main__':     # Program entrance
     #servo.setServoPwm('1',140)
     try:
         print(ultrasonic.get_distance())
-        servo = Servo(1)
-        servo.angle = 90
-        servo.angle = 30
     except KeyboardInterrupt:  # When 'Ctrl+C' is pressed, the child program destroy() will be  executed.
         
         print ("\nEnd of program")
