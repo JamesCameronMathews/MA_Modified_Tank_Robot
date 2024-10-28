@@ -43,7 +43,7 @@ class Servo:
         }
 
         # Initialize PWMOutputDevice for each channel and store in a dictionary
-        #self.servos = {}
+        self.servos = {}
         #for channel, pin in channel_mappings.items():
         #    self.servos[channel] = PWMOutputDevice(pin, active_high=True, initial_value=0, frequency=50)
 
