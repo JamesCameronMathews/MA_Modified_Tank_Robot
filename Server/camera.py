@@ -4,6 +4,13 @@
 import time
 from picamera2 import Picamera2, Preview
 from libcamera import Transform
+from picamera2 import Picamera2
+
+picam2 = Picamera2()
+cameras = picam2.global_camera_info()
+print("Available cameras:", cameras)
+
+
 picam2 = Picamera2()
 preview_config = picam2.create_preview_configuration(main={"size": (640, 480)},transform=Transform(hflip=1,vflip=1))
 picam2.configure(preview_config)
