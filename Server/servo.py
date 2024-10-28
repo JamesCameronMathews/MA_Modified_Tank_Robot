@@ -20,6 +20,88 @@ warnings.filterwarnings("ignore", category=PWMSoftwareFallback)
 ### No need to define a class if using gpiozero
 # The default 'Servo' class already meets our needs for this script
 
+### No need to define a class if using gpiozero
+# The default 'AngularServo' class already meets our needs for this script
+# However, it can be defined as a custom PWM device for more fine-grained control
+class Servo:
+    '''
+    Class to create an angular servo as a generic PWMOutputDevice
+    Using gpiozero for pi5 compatibility
+    '''
+    def __init__(self, channel):
+        '''
+        Constructor for servo class using gpiozero PWMOutputDevice
+        Inputs:
+            channel (int): GPIO servo channel number 0-3
+        Returns:
+            Null
+        '''
+        # Map the available pins to existing Freenove channel no. in a dictionary
+        # When calling the function, we can then just pass 0, 1, or 2 to refer to specific pins
+        # Scoping these mappings only to the constructor to conserve memory
+        channel_mappings = {
+            0:7,
+            1:8,
+            2:25
+        }
+        # Scope the channel variable provided as the pin to this instance
+        self.pin = channel_mappings[channel]
+        self.channel = channel
+        # Initialise the PWMOutputDevice class from gpiozero
+        print(self.pin)
+        self.PwmServo = PWMOutputDevice(self.pin, active_high=True, initial_value=0, frequency=50, pin_factory=None)
+
+    # No need to pass the channel, we scoped that in the constructor
+    def angle_range(self, init_angle):
+        '''
+        Defines the angle range desired for the servo
+        Inputs:
+            channel (int): Channel number
+        Returns:
+            init_angle (int): Angle in degrees
+        '''
+        # Different calculations depending on servo channel
+        if self.channel==0:
+            if init_angle<90 :
+                init_angle=90
+            elif init_angle>150 :
+                init_angle=150
+            else:
+                init_angle=init_angle
+        elif self.channel==1:
+            if init_angle<90 :
+                init_angle=90
+            elif init_angle>150 :
+                init_angle=150
+            else:
+                init_angle=init_angle
+        elif self.channel==2:
+            if init_angle<0 :
+                init_angle=0
+            elif init_angle>180 :
+                init_angle=180
+            else:
+                init_angle=init_angle
+        return init_angle
+        
+    def setServoPwm(self,angle):
+        '''
+        Sets the PWM cycle for the device
+        *Not yet fully tested with gpiozero*
+        Inputs:
+            channel (int)
+        '''
+        if self.channel==0:
+            # Calculate angle
+            angle=int(self.angle_range(angle))
+            # Pulse the servo
+            self.PwmServo.pulse(self.pin,n=1)
+        elif self.channel==1:
+            angle=int(self.angle_range(angle))
+            self.PwmServo.pulse(self.pin,n=1)
+        elif self.channel==2:
+            angle=int(self.angle_range(angle))
+            self.PwmServo.pulse(self.pin,n=1)
 
 #### Initialise the servo instances
 ## For simplicity,
@@ -30,61 +112,14 @@ servo_hand = Servo(25, frame_width = 1/200)
 
 
 if __name__ == '__main__':
-    # print("Now servo 1 will be set to the minimim, then middle, then maxiumum.") 
-    # while True:
-        
-        # servo_arm.max()
-        # print(f'Max: {servo_arm.value}')
-        # time.sleep(1)
-        # servo_arm.mid()
-        # print(f'Mid: {servo_arm.value}')
-        # time.sleep(1)
-        # servo_arm.min()
-        # print(f'Min: {servo_arm.value}')
-        # time.sleep(1)
-        # servo_arm.mid()
-        # print(f'trying value')
-        # servo_arm.value = 1.0
-        # print(f'Max: {servo_arm.value}')
-        # time.sleep(1)
-        # servo_arm.value = 0.0
-        # print(f'Mid: {servo_arm.value}')
-        # time.sleep(1)
-        # servo_arm.value = -1.0
-        # print(f'Min: {servo_arm.value}')
-        # time.sleep(1)
-        # servo_arm.value = 0.0
-        
-        # break
-    print("Now servo 0 will be set to the minimim, then middle, then maxiumum.") 
-    #while True:
-        # servo_hand.value = 1.0
-        #servo_hand.max()
-        #time.sleep(1)
-        #servo_hand.min()
-        #servo_hand.value = 0.0
-        #time.sleep(1)
-        #servo_hand.mid()
-        #servo_hand.value = -1.0
-        #time.sleep(1)
-        #servo_hand.value = 0.0
-        #break
-
-    # Create a tkinter window
-    window = tk.Tk()
-    window.title("Servo Control")
 
     # Function to open the servo
     def open_servo():
-        # Replace with code to open the servo
-        # Example:
         servo_hand.max()
         print("Opening the servo")
 
     # Function to close the servo
     def close_servo():
-        # Replace with code to close the servo
-        # Example:
         servo_hand.min()
         print("Closing the servo")
 
