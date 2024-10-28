@@ -23,93 +23,71 @@ warnings.filterwarnings("ignore", category=PWMSoftwareFallback)
 ### No need to define a class if using gpiozero
 # The default 'AngularServo' class already meets our needs for this script
 # However, it can be defined as a custom PWM device for more fine-grained control
+
 class Servo:
     '''
-    Class to create an angular servo as a generic PWMOutputDevice
-    Using gpiozero for pi5 compatibility
+    Class to create and control multiple angular servos as generic PWMOutputDevices
+    using gpiozero for Pi compatibility.
     '''
-    def __init__(self, channel):
+
+    def __init__(self):
         '''
-        Constructor for servo class using gpiozero PWMOutputDevice
-        Inputs:
-            channel (int): GPIO servo channel number 0-3
-        Returns:
-            Null
+        Initializes servos for all channels using gpiozero PWMOutputDevice.
         '''
-        # Map the available pins to existing Freenove channel no. in a dictionary
-        # When calling the function, we can then just pass 0, 1, or 2 to refer to specific pins
-        # Scoping these mappings only to the constructor to conserve memory
+        # Map the available pins to their respective Freenove channel numbers
         channel_mappings = {
-            0:7,
-            1:8,
-            2:25
+            0: 7,
+            1: 8,
+            2: 25
         }
-        # Scope the channel variable provided as the pin to this instance
-        self.pin = channel_mappings[channel]
-        self.channel = channel
-        # Initialise the PWMOutputDevice class from gpiozero
-        print(self.pin)
-        self.PwmServo = PWMOutputDevice(self.pin, active_high=True, initial_value=0, frequency=50, pin_factory=None)
 
-    # No need to pass the channel, we scoped that in the constructor
-    def angle_range(self, init_angle):
+        # Initialize PWMOutputDevice for each channel and store in a dictionary
+        self.servos = {}
+        for channel, pin in channel_mappings.items():
+            self.servos[channel] = PWMOutputDevice(pin, active_high=True, initial_value=0, frequency=50)
+
+    def angle_range(self, channel, init_angle):
         '''
-        Defines the angle range desired for the servo
-        Inputs:
-            channel (int): Channel number
-        Returns:
-            init_angle (int): Angle in degrees
-        '''
-        # Different calculations depending on servo channel
-        if self.channel==0:
-            if init_angle<90 :
-                init_angle=90
-            elif init_angle>150 :
-                init_angle=150
-            else:
-                init_angle=init_angle
-        elif self.channel==1:
-            if init_angle<90 :
-                init_angle=90
-            elif init_angle>150 :
-                init_angle=150
-            else:
-                init_angle=init_angle
-        elif self.channel==2:
-            if init_angle<0 :
-                init_angle=0
-            elif init_angle>180 :
-                init_angle=180
-            else:
-                init_angle=init_angle
-        return init_angle
+        Defines the angle range for the servo based on channel-specific constraints.
         
-    def setServoPwm(self,angle):
+        Parameters:
+            channel (int): Channel number (0, 1, or 2)
+            init_angle (int): Desired angle in degrees
+        
+        Returns:
+            int: Constrained angle in degrees
         '''
-        Sets the PWM cycle for the device
-        *Not yet fully tested with gpiozero*
-        Inputs:
-            channel (int)
+        # Set angle limits based on channel
+        if channel == 0 or channel == 1:
+            if init_angle < 90:
+                init_angle = 90
+            elif init_angle > 150:
+                init_angle = 150
+        elif channel == 2:
+            if init_angle < 0:
+                init_angle = 0
+            elif init_angle > 180:
+                init_angle = 180
+        return init_angle
+
+    def setServoPwm(self, channel, angle):
         '''
-        if self.channel==0:
-            # Calculate angle
-            angle=int(self.angle_range(angle))
-            # Pulse the servo
-            self.PwmServo.pulse(self.pin,n=1)
-        elif self.channel==1:
-            angle=int(self.angle_range(angle))
-            self.PwmServo.pulse(self.pin,n=1)
-        elif self.channel==2:
-            angle=int(self.angle_range(angle))
-            self.PwmServo.pulse(self.pin,n=1)
-
-#### Initialise the servo instances
-## For simplicity,
-## We will use the generic Servo class from gpiozero
-
-servo_arm = Servo(8, frame_width = 1/50)
-servo_hand = Servo(25, frame_width = 1/200)
-
+        Sets the PWM cycle for the specified servo channel.
+        
+        Parameters:
+            channel (int): Servo channel number (0, 1, or 2)
+            angle (int): Desired angle in degrees
+        '''
+        # Get the constrained angle for the specified channel
+        angle = self.angle_range(channel, angle)
+        
+        # Convert angle to pulse width (assuming pulse width range is 1ms to 2ms)
+        # You may need to adjust this formula based on your servo's requirements
+        pulse_width = (angle / 180.0) + 1.0  # Mapping 0-180 to 1.0ms - 2.0ms
+        
+        # Set the pulse width on the servo's PWM output
+        if channel in self.servos:
+            self.servos[channel].value = pulse_width / 20  # Normalize for PWM output range (0.05-0.10)
 
 if __name__ == '__main__':
 
