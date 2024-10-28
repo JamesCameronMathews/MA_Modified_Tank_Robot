@@ -1,5 +1,6 @@
 import time
 from gpiozero import Motor as zmotor # Alias to prevent conflict
+from gpiozero.exc import GPIOPinInUse
 
 class Motor:
     def __init__(self):
@@ -7,9 +8,15 @@ class Motor:
         self.pwm1 = 24
         self.pwm2 = 23
         self.pwm3 = 5
-        self.pwm4 = 6         
-        self.motorL = zmotor(forward=self.pwm1, backward=self.pwm2, pwm=True)
-        self.motorR = zmotor(forward=self.pwm3, backward=self.pwm4, pwm=True)
+        self.pwm4 = 6       
+        try:
+            self.motorL = zmotor(forward=self.pwm1, backward=self.pwm2, pwm=True)
+        except GPIOPinInUse:
+            pass
+        try:
+            self.motorR = zmotor(forward=self.pwm3, backward=self.pwm4, pwm=True)
+        except GPIOPinInUse:
+            pass
 
     def setMotorModel(self,duty1,duty2):
         # Assign duties to each motor
