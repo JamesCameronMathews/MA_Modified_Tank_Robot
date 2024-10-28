@@ -79,6 +79,12 @@ class Servo:
             channel (int): Servo channel number (0, 1, or 2)
             angle (int): Desired angle in degrees
         '''
+                # Map the available pins to their respective Freenove channel numbers
+        channel_mappings = {
+            0: 7,
+            1: 8,
+            2: 25
+        }
         # Get the constrained angle for the specified channel
         angle = self.angle_range(channel, angle)
         
@@ -87,7 +93,7 @@ class Servo:
         pulse_width = (angle / 180.0) + 1.0  # Mapping 0-180 to 1.0ms - 2.0ms
         
         # Set the pulse width on the servo's PWM output
-        self.servos[channel] = PWMOutputDevice(pin, active_high=True, initial_value=0, frequency=50)
+        self.servos[channel] = PWMOutputDevice(channel_mappings[channel], active_high=True, initial_value=0, frequency=50)
         self.servos[channel].value = pulse_width / 20  # Normalize for PWM output range (0.05-0.10)
 
 if __name__ == '__main__':
