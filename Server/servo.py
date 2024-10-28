@@ -14,6 +14,7 @@ import tkinter as tk
 # Suppress the PWMSoftwareFallback warning
 import warnings
 from gpiozero import PWMSoftwareFallback
+from gpiozero import PWMOutputDevice
 warnings.filterwarnings("ignore", category=PWMSoftwareFallback)
 
 
