@@ -27,7 +27,7 @@ class Motor:
             self.motorR.stop()
 
 # Define the motor object
-PWM=Motor()
+# PWM=Motor()
 
 def loop():
     # Testing loop
