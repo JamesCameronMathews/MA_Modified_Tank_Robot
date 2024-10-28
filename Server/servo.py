@@ -81,9 +81,9 @@ class Servo:
         '''
                 # Map the available pins to their respective Freenove channel numbers
         channel_mappings = {
-            0: 7,
-            1: 8,
-            2: 25
+            '0': 7,
+            '1': 8,
+            '2': 25
         }
         # Get the constrained angle for the specified channel
         angle = self.angle_range(channel, angle)
