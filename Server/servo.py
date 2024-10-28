@@ -43,9 +43,9 @@ class Servo:
         }
 
         # Initialize PWMOutputDevice for each channel and store in a dictionary
-        self.servos = {}
-        for channel, pin in channel_mappings.items():
-            self.servos[channel] = PWMOutputDevice(pin, active_high=True, initial_value=0, frequency=50)
+        #self.servos = {}
+        #for channel, pin in channel_mappings.items():
+        #    self.servos[channel] = PWMOutputDevice(pin, active_high=True, initial_value=0, frequency=50)
 
     def angle_range(self, channel, init_angle):
         '''
@@ -87,8 +87,8 @@ class Servo:
         pulse_width = (angle / 180.0) + 1.0  # Mapping 0-180 to 1.0ms - 2.0ms
         
         # Set the pulse width on the servo's PWM output
-        if channel in self.servos:
-            self.servos[channel].value = pulse_width / 20  # Normalize for PWM output range (0.05-0.10)
+        self.servos[channel] = PWMOutputDevice(pin, active_high=True, initial_value=0, frequency=50)
+        self.servos[channel].value = pulse_width / 20  # Normalize for PWM output range (0.05-0.10)
 
 if __name__ == '__main__':
 
